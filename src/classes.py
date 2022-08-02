@@ -1,45 +1,73 @@
 from tkinter import Button
+from typing import TYPE_CHECKING
+
 from .utils import make_mines
 
+if TYPE_CHECKING:
+    from .graphical_based import Tkinter
+
+
 class Cell(Button):
-    def __init__(self, tk, row, column):
-        self.obj = tk
+    """Represents a cell in the board.
+
+    :param game: The game instance.
+    :param row: The row of the cell.
+    :param column: The column of the cell.
+    """
+
+    def __init__(self, game: Tkinter, row: int, column: int):
+        super().__init__(self.game.root, image=game.unknown, command=self.mine)
+
+        self.game = game
         self.row = row
         self.col = column
-        super().__init__(self.obj.root, image=tk.unknown, command = self.mine)
         self.bind("<Button-3>", self.flag)
-    
+
     def mine(self):
-        if not self.obj.started == True:
-            self.obj.started = True
-            self.obj.actualBoard = make_mines(self.obj.actualBoard, self.obj.size, self.obj.mines_n, (self.row, self.col))
-        if self.obj.gameOver:
+        """Mines the cell."""
+        if not self.game.started:
+            self.game.started = True
+            self.game.actualBoard = make_mines(
+                self.game.actualBoard,
+                self.game.size,
+                self.game.mines_n,
+                (self.row, self.col),
+            )
+        if self.game.gameOver:
             return
-        if not self.obj.visualBoard[self.row][self.col] == "M":
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.game_over(False, self.row, self.col)
+        if not self.game.visualBoard[self.row][self.col] == "M":
+            if self.game.actualBoard[self.row][self.col] == "*":
+                self.game.game_over(False, self.row, self.col)
             else:
-                self.obj.visualBoard[self.row][self.col] = "M"
-                self.configure(image=self.obj.numbers[self.obj.actualBoard[self.row][self.col]-1] if self.obj.actualBoard[self.row][self.col] > 0 else self.obj.mined)
-                self.obj.total_mined += 1
-                if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
-                    self.obj.game_over(True, self.row, self.col)
+                self.game.visualBoard[self.row][self.col] = "M"
+                self.configure(
+                    image=self.game.numbers[self.game.actualBoard[self.row][self.col] - 1]
+                    if self.game.actualBoard[self.row][self.col] > 0
+                    else self.game.mined
+                )
+                self.game.total_mined += 1
+                if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+                    self.game.game_over(True, self.row, self.col)
                 # self.obj.auto_mine(self)
-                
 
     def flag(self, event):
-        if self.obj.gameOver:
+        """Flags the cell.
+
+        :param event: The default event received from
+                    the tk button click dispatch.
+        """
+        if self.game.gameOver:
             return
-        vB = self.obj.visualBoard
+        vB = self.game.visualBoard
         if vB[self.row][self.col] == "F":
-            self.configure(image=self.obj.unknown)
-            self.obj.visualBoard[self.row][self.col] = "N"
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.c_f -= 1
+            self.configure(image=self.game.unknown)
+            self.game.visualBoard[self.row][self.col] = "N"
+            if self.game.actualBoard[self.row][self.col] == "*":
+                self.game.c_f -= 1
         else:
-            self.obj.visualBoard[self.row][self.col] = "F"
-            self.configure(image=self.obj.flagged)
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.c_f += 1
-            if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
-                    self.obj.game_over(True, self.row, self.col)
+            self.game.visualBoard[self.row][self.col] = "F"
+            self.configure(image=self.game.flagged)
+            if self.game.actualBoard[self.row][self.col] == "*":
+                self.game.c_f += 1
+            if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+                self.game.game_over(True, self.row, self.col)

@@ -1,13 +1,6 @@
-
-
-# -----------------------------------------------
-#               By Osama Alhennawi
-# -----------------------------------------------
-
-
-# Imports
-import random
 from colorama import Fore
+
+from utils import make_mines
 
 mines_n = 8
 size = 8
@@ -17,44 +10,12 @@ actualBoard = [[0 for i in range(size)] for x in range(size)]
 visualBoard = [["N" for i in range(size)] for x in range(size)]
 
 
-def find_neighbors(board, row, col):
-    """
-    Get neighbors of a cell
-    """
-    neighbors = []
-    for i in range(row-1, row+2):
-        for j in range(col-1, col+2):
-            if i > -1 and j > -1 and j < len(board[0]) and i < len(board):
-                neighbors.append((i, j))
-    return neighbors
-
-
-def make_mines(board, size):
-    """
-    Place random mines on the board
-    """
-    avail = [(i, j) for i in range(size) for j in range(size)]
-    for i in range(mines_n):
-        # Random row and column
-        pos = random.choice(avail)
-        row = pos[0]
-        column = pos[1]
-        avail.remove(pos)
-        # The random cell is not a mine
-        if board[row][column] != "*":
-            board[row][column] = "*"
-            # Get all neighbors of the mine, and increment them
-            neighbors = find_neighbors(board, row, column)
-            for neighbor in neighbors:
-                if board[neighbor[0]][neighbor[1]] != "*":
-                    board[neighbor[0]][neighbor[1]] += 1
-    # Return the resulted board
-    return board
-
-
 def render(b):
-    """
-    Render the gameplay board using visualBoard
+    """Render the gameplay board.
+
+    Visually renders the board.
+
+    :param board: The board to render.
     """
     print("     1       2       3       4       5       6       7       8")
     print("  _______________________________________________________________")
@@ -70,7 +31,10 @@ def render(b):
 
 
 # Place mines
-print("Hello, welcome to this minesweeper game!, use the following format to play: <flag or mine> <row>, <column>")
+print(
+    "Hello, welcome to this minesweeper game!"
+    "Use the following format to play: <flag or mine> <row>, <column>"
+)
 mines_str = int(input("Total mines: "))
 mines_n = mines_str
 print("Making board...")
