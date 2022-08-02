@@ -1,8 +1,3 @@
-# -----------------------------------------------
-#               By Osama Alhennawi
-# -----------------------------------------------
-
-
 from colorama import Fore
 
 from utils import make_mines

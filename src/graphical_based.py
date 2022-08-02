@@ -1,9 +1,3 @@
-# -----------------------------------------------
-#               By Osama Alhennawi
-#             Assests from https://github.com/zigurous/unity-minesweeper-tutorial/tree/main/Assets/Sprites
-# -----------------------------------------------
-
-
 import json
 from tkinter import Button, Menu, PhotoImage, Tk
 from tkinter.messagebox import showinfo
