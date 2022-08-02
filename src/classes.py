@@ -1,6 +1,10 @@
 from tkinter import Button
+from typing import TYPE_CHECKING
 
 from .utils import make_mines
+
+if TYPE_CHECKING:
+    from .graphical_based import Tkinter
 
 
 class Cell(Button):
@@ -11,7 +15,7 @@ class Cell(Button):
     :param column: The column of the cell.
     """
 
-    def __init__(self, game, row, column):
+    def __init__(self, game: Tkinter, row: int, column: int):
         super().__init__(self.game.root, image=game.unknown, command=self.mine)
 
         self.game = game
