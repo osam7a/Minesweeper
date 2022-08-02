@@ -6,13 +6,12 @@
 # -----------------------------------------------
 
 
-# Imports
 import json
-from tkinter import *
-from tkinter.messagebox import *
-from tkinter.simpledialog import *
-from .utils import *
-from .classes import *
+from tkinter import Button, Menu, PhotoImage, Tk
+from tkinter.messagebox import showinfo
+from tkinter.simpledialog import askinteger
+
+from classes import Cell
 
 
 def rest(root):
@@ -71,7 +70,7 @@ class Tkinter:
         self.actualBoard = [[0 for i in range(self.size)] for x in range(self.size)]
         self.visualBoard = [["N" for i in range(self.size)] for x in range(self.size)]
 
-        Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(row=self.size+1, column=0, columnspan=self.size, sticky=N+W+S+E)
+        Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(row=self.size+1, column=0, columnspan=self.size, sticky="nswe")
         menu = Menu(self.root)
         self.root.config(menu=menu)
         settings = Menu(menu)
@@ -128,7 +127,7 @@ class Tkinter:
         for i in range(self.size):
             for j in range(self.size):
                 btn = Cell(self, i, j)
-                btn.grid(row=i, column=j, sticky=N+W+S+E)
+                btn.grid(row=i, column=j, sticky="nswe")
                 self.cells[i][j] = btn
 
 def main():
