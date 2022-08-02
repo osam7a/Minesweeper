@@ -1,8 +1,14 @@
 import random
 
+
 def find_neighbors(board, row, col):
-    """
-    Get neighbors of a cell
+    """Finds the neighbors of a cell.
+
+    :param board: The board to search.
+    :param row: The row of the cell.
+    :param col: The column of the cell.
+
+    :return: A list of neighbouring cells.
     """
     neighbors = []
     for i in range(row-1, row+2):
@@ -12,12 +18,20 @@ def find_neighbors(board, row, col):
                     
     return neighbors
 
-def make_mines(board, size, mines_n, excep):
-    """
-    Place random mines on the board
+def make_mines(board, size, mines_n = 8, excep = None):
+    """Place random mines on the board
+
+    :param board: The board to make the mines on.
+    :param size: The size of the board.
+    :param mines_n: The number of mines to create.
+    :excep: ?
+
+    :return: The created board.
     """
     avail = [(i, j) for i in range(size) for j in range(size)]
-    avail.remove(excep)
+    if excep:
+        avail.remove(excep)
+        
     for i in range(mines_n):
         # Random row and column
         pos = random.choice(avail)
