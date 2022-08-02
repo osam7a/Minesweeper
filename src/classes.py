@@ -50,18 +50,24 @@ class Cell(Button):
                     self.game.game_over(True, self.row, self.col)
                 # self.AMine(self.row, self.col)
 
-    # def AMine(self, row, column):
-    #     neighbors = find_neighbors(self.game.actualBoard, row, column, False)
-    #     for neighbor in neighbors:
-    #         if not self.game.actualBoard[0][neighbor[1]] == "*" and not self.game.actualBoard[neighbor[0]][neighbor[1]] > 0:
-    #             self.game.visualBoard[neighbor[0]][neighbor[1]] = "M"
-    #             self.game.total_mined += 1
-    #             self.game.cells[neighbor[0]][neighbor[1]].configure(
-    #                 image=self.game.mined
-    #             )
-    #             self.AMine(neighbor[0], neighbor[1])
-    #     if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
-    #         self.game.game_over(True, self.row, self.col)
+    def AMine(self, row, column):
+        self.checked = set((row, column))
+        self._AMine(row, column)
+
+    def _AMine(self, row, column):
+        neighbors = find_neighbors(self.game.actualBoard, row, column, False)
+        for neighbor in neighbors:
+            if neighbor in self.checked:
+                continue
+            if not isinstance(self.game.actualBoard[neighbor[0]][neighbor[1]], str):
+                self.checked.add(neighbor)
+                self.game.visualBoard[neighbor[0]][neighbor[1]] = "M"
+                self.game.total_mined += 1
+                self.game.cells[neighbor[0]][neighbor[1]].configure(
+                    image=self.game.mined if self.game.actualBoard[row][column] == 0 else self.game.numbers[self.game.actualBoard[row][column] - 1]
+                )
+                if not self.game.actualBoard[neighbor[0]][neighbor[1]] > 0:
+                    self._AMine(neighbor[0], neighbor[1])
 
     def flag(self, event):
         """Flags the cell.
@@ -78,9 +84,10 @@ class Cell(Button):
             if self.game.actualBoard[self.row][self.col] == "*":
                 self.game.c_f -= 1
         else:
-            self.game.visualBoard[self.row][self.col] = "F"
-            self.configure(image=self.game.flagged)
-            if self.game.actualBoard[self.row][self.col] == "*":
-                self.game.c_f += 1
-            if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
-                self.game.game_over(True, self.row, self.col)
+            if not vB[self.row][self.col] == "M":
+                self.game.visualBoard[self.row][self.col] = "F"
+                self.configure(image=self.game.flagged)
+                if self.game.actualBoard[self.row][self.col] == "*":
+                    self.game.c_f += 1
+                if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+                    self.game.game_over(True, self.row, self.col)
