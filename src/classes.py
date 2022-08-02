@@ -1,7 +1,7 @@
 from tkinter import Button
 from typing import TYPE_CHECKING
 
-from .utils import make_mines
+from .utils import make_mines, find_neighbors
 
 if TYPE_CHECKING:
     from .graphical_based import Tkinter
@@ -15,8 +15,8 @@ class Cell(Button):
     :param column: The column of the cell.
     """
 
-    def __init__(self, game: Tkinter, row: int, column: int):
-        super().__init__(self.game.root, image=game.unknown, command=self.mine)
+    def __init__(self, game: "Tkinter", row: int, column: int):
+        super().__init__(game.root, image=game.unknown, command=self.mine)
 
         self.game = game
         self.row = row
@@ -48,7 +48,20 @@ class Cell(Button):
                 self.game.total_mined += 1
                 if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
                     self.game.game_over(True, self.row, self.col)
-                # self.obj.auto_mine(self)
+                # self.AMine(self.row, self.col)
+
+    # def AMine(self, row, column):
+    #     neighbors = find_neighbors(self.game.actualBoard, row, column, False)
+    #     for neighbor in neighbors:
+    #         if not self.game.actualBoard[0][neighbor[1]] == "*" and not self.game.actualBoard[neighbor[0]][neighbor[1]] > 0:
+    #             self.game.visualBoard[neighbor[0]][neighbor[1]] = "M"
+    #             self.game.total_mined += 1
+    #             self.game.cells[neighbor[0]][neighbor[1]].configure(
+    #                 image=self.game.mined
+    #             )
+    #             self.AMine(neighbor[0], neighbor[1])
+    #     if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+    #         self.game.game_over(True, self.row, self.col)
 
     def flag(self, event):
         """Flags the cell.

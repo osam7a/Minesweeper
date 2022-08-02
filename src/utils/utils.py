@@ -1,20 +1,31 @@
 import random
 
 
-def find_neighbors(board, row, col):
+def find_neighbors(board, row, col, diagonal=True):
     """Finds the neighbors of a cell.
 
     :param board: The board to search.
     :param row: The row of the cell.
     :param col: The column of the cell.
+    :param diagonal: Whether to include diagonal neighbors.
 
     :return: A list of neighbouring cells.
     """
     neighbors = []
-    for i in range(row - 1, row + 2):
-        for j in range(col - 1, col + 2):
-            if i > -1 and j > -1 and j < len(board[0]) and i < len(board):
-                neighbors.append((i, j))
+    if diagonal:
+        for i in range(row - 1, row + 2):
+            for j in range(col - 1, col + 2):
+                if i > -1 and j > -1 and j < len(board[0]) and i < len(board):
+                    neighbors.append((i, j))
+    else:
+        if row - 1 >= 0:
+            neighbors.append((row - 1, col))
+        if row + 1 < len(board):
+            neighbors.append((row + 1, col))
+        if col - 1 >= 0:
+            neighbors.append((row, col - 1))
+        if col + 1 < len(board[0]):
+            neighbors.append((row, col + 1))
 
     return neighbors
 

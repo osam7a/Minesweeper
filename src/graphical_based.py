@@ -6,6 +6,18 @@ from tkinter.simpledialog import askinteger
 from .classes import Cell
 
 
+LOST_MESSAGE = lambda flags, bombs: f"""
+You lost the game!
+Defused Bombs: {flags}
+Remaining Bombs: {bombs - flags}
+"""
+WIN_MESSAGE = lambda flags, bombs: f"""
+You won the game!
+Defused Bombs: {flags}
+Remaining Bombs: {bombs - flags}
+"""
+
+
 def rest(root):
     root.destroy()
     main()
@@ -25,7 +37,7 @@ def customSize(root):
         "Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18
     )
     mines = askinteger(
-        "Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size - 4
+        "Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size
     )
     changeSize(root, size, mines)
 
@@ -108,7 +120,7 @@ class Tkinter:
         self.gameOver = True
         for _row in self.cells:
             for _cell in _row:
-                if _cell.obj.actualBoard[_cell.row][_cell.col] == "*":
+                if self.actualBoard[_cell.row][_cell.col] == "*":
                     if not win:
                         if not _cell == cell:
 
@@ -123,18 +135,7 @@ class Tkinter:
                             _cell.configure(image=self.bomb)
                 elif self.visualBoard[_cell.row][_cell.col] == "F":
                     _cell.configure(image=self.flag_wrong)
-        showinfo("Game Over", "You lost!" if not win else "You win!")
-
-    # def auto_mine(self, cell):
-    #     neighbors = self.find_neighbors(self.actualBoard, cell.row, cell.col)
-    #     neighbors = filter(lambda i: i not in self.visited, neighbors)
-    #     for neighbor in neighbors:
-    #         _neighbor = self.actualBoard[neighbor[0]][neighbor[1]]
-    #         self.visited.append(neighbor)
-    #         _cell = self.cells[neighbor[0]][neighbor[1]]
-    #         if _neighbor != "*":
-    #             _cell.configure(image=self.mined)
-    #             self.auto_mine(_cell)
+        showinfo("Game Over", LOST_MESSAGE(self.c_f, self.mines_n) if not win else WIN_MESSAGE(self.c_f, self.mines_n))
 
     def load_board(self):
         for i in range(self.size):
