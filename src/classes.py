@@ -11,7 +11,7 @@ class Cell(Button):
         self.bind("<Button-3>", self.flag)
 
     def mine(self):
-        if not self.obj.started == True:
+        if not self.obj.started:
             self.obj.started = True
             self.obj.actualBoard = make_mines(
                 self.obj.actualBoard,

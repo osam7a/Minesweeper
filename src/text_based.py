@@ -37,7 +37,8 @@ def render(b):
 
 # Place mines
 print(
-    "Hello, welcome to this minesweeper game!, use the following format to play: <flag or mine> <row>, <column>"
+    "Hello, welcome to this minesweeper game!"
+    "Use the following format to play: <flag or mine> <row>, <column>"
 )
 mines_str = int(input("Total mines: "))
 mines_n = mines_str

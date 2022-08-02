@@ -151,4 +151,4 @@ class Tkinter:
 
 
 def main():
-    tk = Tkinter()
+    Tkinter()
