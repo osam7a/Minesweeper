@@ -1,5 +1,3 @@
-
-
 # -----------------------------------------------
 #               By Osama Alhennawi
 # -----------------------------------------------
@@ -38,7 +36,9 @@ def render(b):
 
 
 # Place mines
-print("Hello, welcome to this minesweeper game!, use the following format to play: <flag or mine> <row>, <column>")
+print(
+    "Hello, welcome to this minesweeper game!, use the following format to play: <flag or mine> <row>, <column>"
+)
 mines_str = int(input("Total mines: "))
 mines_n = mines_str
 print("Making board...")
