@@ -24,6 +24,9 @@ class Cell(Button):
         self.bind("<Button-3>", self.flag)
     
     def mine(self):
+        if not self.obj.started == True:
+            self.obj.started = True
+            self.obj.actualBoard = self.obj.make_mines(self.obj.actualBoard, self.obj.size, self.obj.mines_n, (self.row, self.col))
         if self.obj.gameOver:
             return
         if not self.obj.visualBoard[self.row][self.col] == "M":
@@ -69,7 +72,7 @@ def changeSize(root, size, mine_count):
 
 def customSize(root):
     size = askinteger("Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18)
-    mines = askinteger("Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size)
+    mines = askinteger("Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size-4)
     changeSize(root, size, mines)
 
 class Tkinter:
@@ -85,6 +88,7 @@ class Tkinter:
         self.gameOver = False
         self.c_f = 0
         self.total_mined = 0
+        self.started = False
 
         # Images
         self.flagged = PhotoImage(file="images/TileFlag.png")
@@ -107,7 +111,6 @@ class Tkinter:
         # Arrays
         self.cells = [[i for i in range(self.size)] for x in range(self.size)]
         self.actualBoard = [[0 for i in range(self.size)] for x in range(self.size)]
-        self.actualBoard = self.make_mines(self.actualBoard, self.size)
         self.visualBoard = [["N" for i in range(self.size)] for x in range(self.size)]
 
         Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(row=self.size+1, column=0, columnspan=self.size, sticky=N+W+S+E)
@@ -163,17 +166,19 @@ class Tkinter:
     #             _cell.configure(image=self.mined)
     #             self.auto_mine(_cell)
 
-    def make_mines(self, board, size):
+    def make_mines(self, board, size, mines_n, excep):
         """
         Place random mines on the board
         """
         avail = [(i, j) for i in range(size) for j in range(size)]
-        for i in range(self.mines_n):
+        avail.remove(excep)
+        for i in range(mines_n):
             # Random row and column
             pos = random.choice(avail)
             row = pos[0]
             column = pos[1]
             avail.remove(pos)
+            # print("Mine at ", row, column)
             # The random cell is not a mine
             if board[row][column] != "*":
                 board[row][column] = "*"
@@ -201,6 +206,7 @@ class Tkinter:
             for j in range(col-1, col+2):
                 if i > -1 and j > -1 and j < len(board[0]) and i < len(board):
                     neighbors.append((i, j))
+                    
         return neighbors
 
 def main():
