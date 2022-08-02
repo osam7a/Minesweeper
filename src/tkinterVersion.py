@@ -7,56 +7,13 @@
 
 
 # Imports
-import random
 import json
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
+from .utils import *
+from .classes import *
 
-
-
-class Cell(Button):
-    def __init__(self, tk, row, column):
-        self.obj = tk
-        self.row = row
-        self.col = column
-        super().__init__(self.obj.root, image=tk.unknown, command = self.mine)
-        self.bind("<Button-3>", self.flag)
-    
-    def mine(self):
-        if not self.obj.started == True:
-            self.obj.started = True
-            self.obj.actualBoard = self.obj.make_mines(self.obj.actualBoard, self.obj.size, self.obj.mines_n, (self.row, self.col))
-        if self.obj.gameOver:
-            return
-        if not self.obj.visualBoard[self.row][self.col] == "M":
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.game_over(False, self.row, self.col)
-            else:
-                self.obj.visualBoard[self.row][self.col] = "M"
-                self.configure(image=self.obj.numbers[self.obj.actualBoard[self.row][self.col]-1] if self.obj.actualBoard[self.row][self.col] > 0 else self.obj.mined)
-                self.obj.total_mined += 1
-                if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
-                    self.obj.game_over(True, self.row, self.col)
-                # self.obj.auto_mine(self)
-                
-
-    def flag(self, event):
-        if self.obj.gameOver:
-            return
-        vB = self.obj.visualBoard
-        if vB[self.row][self.col] == "F":
-            self.configure(image=self.obj.unknown)
-            self.obj.visualBoard[self.row][self.col] = "N"
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.c_f -= 1
-        else:
-            self.obj.visualBoard[self.row][self.col] = "F"
-            self.configure(image=self.obj.flagged)
-            if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.c_f += 1
-            if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
-                    self.obj.game_over(True, self.row, self.col)
 
 def rest(root):
     root.destroy()
@@ -74,6 +31,7 @@ def customSize(root):
     size = askinteger("Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18)
     mines = askinteger("Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size-4)
     changeSize(root, size, mines)
+
 
 class Tkinter:
     def __init__(self):
@@ -166,30 +124,6 @@ class Tkinter:
     #             _cell.configure(image=self.mined)
     #             self.auto_mine(_cell)
 
-    def make_mines(self, board, size, mines_n, excep):
-        """
-        Place random mines on the board
-        """
-        avail = [(i, j) for i in range(size) for j in range(size)]
-        avail.remove(excep)
-        for i in range(mines_n):
-            # Random row and column
-            pos = random.choice(avail)
-            row = pos[0]
-            column = pos[1]
-            avail.remove(pos)
-            # print("Mine at ", row, column)
-            # The random cell is not a mine
-            if board[row][column] != "*":
-                board[row][column] = "*"
-                # Get all neighbors of the mine, and increment them
-                neighbors = self.find_neighbors(board, row, column)
-                for neighbor in neighbors:
-                    if board[neighbor[0]][neighbor[1]] != "*":
-                        board[neighbor[0]][neighbor[1]] += 1
-        # Return the resulted board
-        return board
-
     def load_board(self):
         for i in range(self.size):
             for j in range(self.size):
@@ -197,20 +131,5 @@ class Tkinter:
                 btn.grid(row=i, column=j, sticky=N+W+S+E)
                 self.cells[i][j] = btn
 
-    def find_neighbors(self, board, row, col):
-        """
-        Get neighbors of a cell
-        """
-        neighbors = []
-        for i in range(row-1, row+2):
-            for j in range(col-1, col+2):
-                if i > -1 and j > -1 and j < len(board[0]) and i < len(board):
-                    neighbors.append((i, j))
-                    
-        return neighbors
-
 def main():
     tk = Tkinter()
-
-if __name__ == "__main__":
-    main()
