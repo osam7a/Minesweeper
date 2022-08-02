@@ -29,11 +29,13 @@ class Cell(Button):
             return
         if not self.obj.visualBoard[self.row][self.col] == "M":
             if self.obj.actualBoard[self.row][self.col] == "*":
-                self.obj.game_over(self.row, self.col)
+                self.obj.game_over(False, self.row, self.col)
             else:
                 self.obj.visualBoard[self.row][self.col] = "M"
                 self.configure(image=self.obj.numbers[self.obj.actualBoard[self.row][self.col]-1] if self.obj.actualBoard[self.row][self.col] > 0 else self.obj.mined)
-                
+                self.obj.total_mined += 1
+                if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
+                    self.obj.game_over(True, self.row, self.col)
                 # self.obj.auto_mine(self)
                 
 
@@ -44,10 +46,15 @@ class Cell(Button):
         if vB[self.row][self.col] == "F":
             self.configure(image=self.obj.unknown)
             self.obj.visualBoard[self.row][self.col] = "N"
+            if self.obj.actualBoard[self.row][self.col] == "*":
+                self.obj.c_f -= 1
         else:
             self.obj.visualBoard[self.row][self.col] = "F"
             self.configure(image=self.obj.flagged)
-            
+            if self.obj.actualBoard[self.row][self.col] == "*":
+                self.obj.c_f += 1
+            if self.obj.c_f + self.obj.total_mined == self.obj.size * self.obj.size:
+                    self.obj.game_over(True, self.row, self.col)
 
 def rest(root):
     root.destroy()
@@ -77,6 +84,8 @@ class Tkinter:
         self.size = self.conf['size']
         self.mines_left = self.mines_n
         self.gameOver = False
+        self.c_f = 0
+        self.total_mined = 0
 
         # Images
         self.flagged = PhotoImage(file="images/TileFlag.png")
@@ -120,20 +129,29 @@ class Tkinter:
         self.load_board()
         self.root.mainloop()
 
-    def game_over(self, row, col):
+    def game_over(self, win, row, col):
         cell = self.cells[row][col]
-        cell.configure(image=self.exploded)
+        if not win:
+            cell.configure(image=self.exploded)
         self.gameOver = True
         for _row in self.cells:
             for _cell in _row:
-                if _cell.obj.actualBoard[_cell.row][_cell.col] == "*" and not _cell == cell:
-                    if self.visualBoard[_cell.row][_cell.col] == "F":
-                        _cell.configure(image=self.flag_correct)
+                if _cell.obj.actualBoard[_cell.row][_cell.col] == "*":
+                    if not win:
+                        if not _cell == cell:
+
+                            if self.visualBoard[_cell.row][_cell.col] == "F":
+                                _cell.configure(image=self.flag_correct)
+                            else:
+                                _cell.configure(image=self.bomb)
                     else:
-                        _cell.configure(image=self.bomb)
+                        if self.visualBoard[_cell.row][_cell.col] == "F":
+                            _cell.configure(image=self.flag_correct)
+                        else:
+                            _cell.configure(image=self.bomb)
                 elif self.visualBoard[_cell.row][_cell.col] == "F":
                     _cell.configure(image=self.flag_wrong)
-        showinfo("Game Over", "You lost!")
+        showinfo("Game Over", "You lost!" if not win else "You win!")
 
     # def auto_mine(self, cell):
     #     neighbors = self.find_neighbors(self.actualBoard, cell.row, cell.col)
