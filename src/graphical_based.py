@@ -1,23 +1,15 @@
-
-
-# -----------------------------------------------
-#               By Osama Alhennawi
-#             Assests from https://github.com/zigurous/unity-minesweeper-tutorial/tree/main/Assets/Sprites
-# -----------------------------------------------
-
-
-# Imports
 import json
-from tkinter import *
-from tkinter.messagebox import *
-from tkinter.simpledialog import *
-from .utils import *
-from .classes import *
+from tkinter import Button, Menu, PhotoImage, Tk
+from tkinter.messagebox import showinfo
+from tkinter.simpledialog import askinteger
+
+from .classes import Cell
 
 
 def rest(root):
     root.destroy()
     main()
+
 
 def changeSize(root, size, mine_count):
     root.destroy()
@@ -27,9 +19,14 @@ def changeSize(root, size, mine_count):
     json.dump(load, open("config.json", "w"))
     main()
 
+
 def customSize(root):
-    size = askinteger("Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18)
-    mines = askinteger("Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size-4)
+    size = askinteger(
+        "Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18
+    )
+    mines = askinteger(
+        "Mines", "Enter number of mines:", minvalue=1, maxvalue=size * size - 4
+    )
     changeSize(root, size, mines)
 
 
@@ -39,9 +36,9 @@ class Tkinter:
         self.root.title("Minesweeper")
 
         # Configuration
-        self.conf = json.load(open('config.json'))
-        self.mines_n = self.conf['mines_n']
-        self.size = self.conf['size']
+        self.conf = json.load(open("config.json"))
+        self.mines_n = self.conf["mines_n"]
+        self.size = self.conf["size"]
         self.mines_left = self.mines_n
         self.gameOver = False
         self.c_f = 0
@@ -63,7 +60,16 @@ class Tkinter:
         self.flag_correct = self.flag_correct.subsample(5, 5)
         self.flag_wrong = PhotoImage(file="images/TileFlagInCorrect.png")
         self.flag_wrong = self.flag_wrong.subsample(5, 5)
-        self.numbers = [PhotoImage(file="images/Tile1.png").subsample(5, 5), PhotoImage(file="images/Tile2.png").subsample(5, 5), PhotoImage(file="images/Tile3.png").subsample(5, 5), PhotoImage(file="images/Tile4.png").subsample(5, 5), PhotoImage(file="images/Tile5.png").subsample(5, 5), PhotoImage(file="images/Tile6.png").subsample(5, 5), PhotoImage(file="images/Tile7.png").subsample(5, 5), PhotoImage(file="images/Tile8.png").subsample(5, 5)]
+        self.numbers = [
+            PhotoImage(file="images/Tile1.png").subsample(5, 5),
+            PhotoImage(file="images/Tile2.png").subsample(5, 5),
+            PhotoImage(file="images/Tile3.png").subsample(5, 5),
+            PhotoImage(file="images/Tile4.png").subsample(5, 5),
+            PhotoImage(file="images/Tile5.png").subsample(5, 5),
+            PhotoImage(file="images/Tile6.png").subsample(5, 5),
+            PhotoImage(file="images/Tile7.png").subsample(5, 5),
+            PhotoImage(file="images/Tile8.png").subsample(5, 5),
+        ]
         self.visited = []
 
         # Arrays
@@ -71,20 +77,26 @@ class Tkinter:
         self.actualBoard = [[0 for i in range(self.size)] for x in range(self.size)]
         self.visualBoard = [["N" for i in range(self.size)] for x in range(self.size)]
 
-        Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(row=self.size+1, column=0, columnspan=self.size, sticky=N+W+S+E)
+        Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(
+            row=self.size + 1, column=0, columnspan=self.size, sticky="nswe"
+        )
         menu = Menu(self.root)
         self.root.config(menu=menu)
         settings = Menu(menu)
-        settings.add_command(label="8x8 Size (10 Mines)", command=lambda: changeSize(self.root, 8, 10))
-        settings.add_command(label="12x12 Size (60 Mines)", command=lambda: changeSize(self.root, 12, 60))
-        settings.add_command(label="18x18 Size (120 Mines)", command=lambda: changeSize(self.root, 18, 120))
+        settings.add_command(
+            label="8x8 Size (10 Mines)", command=lambda: changeSize(self.root, 8, 10)
+        )
+        settings.add_command(
+            label="12x12 Size (60 Mines)", command=lambda: changeSize(self.root, 12, 60)
+        )
+        settings.add_command(
+            label="18x18 Size (120 Mines)", command=lambda: changeSize(self.root, 18, 120)
+        )
         settings.add_command(label="Custom", command=lambda: customSize(self.root))
         menu.add_cascade(label="Settings", menu=settings)
         exitg = Menu(menu)
         exitg.add_command(label="Exit", command=lambda: self.root.destroy())
         menu.add_cascade(label="Exit", menu=exitg)
-
-
 
         self.load_board()
         self.root.mainloop()
@@ -128,8 +140,9 @@ class Tkinter:
         for i in range(self.size):
             for j in range(self.size):
                 btn = Cell(self, i, j)
-                btn.grid(row=i, column=j, sticky=N+W+S+E)
+                btn.grid(row=i, column=j, sticky="nswe")
                 self.cells[i][j] = btn
 
+
 def main():
-    tk = Tkinter()
+    Tkinter()
