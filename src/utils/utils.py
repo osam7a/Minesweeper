@@ -25,7 +25,7 @@ def make_mines(board, size, mines_n=8, excep=None):
     :param board: The board to make the mines on.
     :param size: The size of the board.
     :param mines_n: The number of mines to create.
-    :excep: ?
+    :excep: The cell to exclude from the mines.
 
     :return: The created board.
     """
