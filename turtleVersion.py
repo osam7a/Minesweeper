@@ -9,7 +9,6 @@
 # Imports
 import random
 import json
-from colorama import Fore
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
