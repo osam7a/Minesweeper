@@ -2,18 +2,22 @@ import json
 from tkinter import Button, Menu, PhotoImage, Tk
 from tkinter.messagebox import showinfo
 from tkinter.simpledialog import askinteger
+from time import time
 
 from .classes import Cell
 
-LOST_MESSAGE = lambda flags, bombs: f"""
+LOST_MESSAGE = lambda flags, bombs, finish: f"""
 You lost the game!
 Defused Bombs: {flags}
 Remaining Bombs: {bombs - flags}
+Time: {finish} seconds
 """
-WIN_MESSAGE = lambda flags, bombs: f"""
+WIN_MESSAGE = lambda flags, bombs, finish: f"""
 You won the game!
 Defused Bombs: {flags}
 Remaining Bombs: {bombs - flags}
+High Score: {get_config("high_score")} seconds
+{"New High Score!" if get_config("high_score") < finish else ""}
 """
 HOW_TO_PLAY = """
 What is minesweeper?
@@ -51,6 +55,28 @@ def showHelp():
     showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
 
 
+def get_config(k):
+    """
+    Gets the configuration from the config.json file.
+
+    :return: The configuration.
+    """
+    return json.load(open("config.json"))[k]
+
+def set_config(k, v):
+    """
+    Sets the configuration in the config.json file.
+
+    :param k: The key of the configuration.
+    :param v: The value of the configuration.
+
+    :return: None
+    """
+    load = json.load(open("config.json"))
+    load[k] = v
+    json.dump(load, open("config.json", "w"))
+
+
 def changeSize(root, size, mine_count):
     """
     Changes the size of the board.
@@ -62,10 +88,8 @@ def changeSize(root, size, mine_count):
     :return: None
     """
     root.destroy()
-    load = json.load(open("config.json"))
-    load["mines_n"] = mine_count
-    load["size"] = size
-    json.dump(load, open("config.json", "w"))
+    set_config("mines_n", mine_count)
+    set_config("size", size)
     main(False)
 
 
@@ -93,8 +117,8 @@ class Tkinter:
 
         # Configuration
         self.conf = json.load(open("config.json"))
-        self.mines_n = self.conf["mines_n"]
-        self.size = self.conf["size"]
+        self.mines_n = get_config("mines_n")
+        self.size = get_config("size")
         self.mines_left = self.mines_n
         self.gameOver = False
         self.c_f = 0
@@ -130,8 +154,8 @@ class Tkinter:
 
         # Arrays
         self.cells = [[i for i in range(self.size)] for x in range(self.size)]
-        self.actualBoard = [[0 for i in range(self.size)] for x in range(self.size)]
-        self.visualBoard = [["N" for i in range(self.size)] for x in range(self.size)]
+        self.actual_board = [[0 for i in range(self.size)] for x in range(self.size)]
+        self.visual_board = [["N" for i in range(self.size)] for x in range(self.size)]
 
         Button(self.root, text="Restart", command=lambda: rest(self.root)).grid(
             row=self.size + 1, column=0, columnspan=self.size, sticky="nswe"
@@ -158,6 +182,7 @@ class Tkinter:
         if first_game:
             showHelp()
             first_game = True
+        self.timer = None
         self.root.mainloop()
 
     def game_over(self, win, row, col):
@@ -170,28 +195,35 @@ class Tkinter:
 
         :return: None
         """
+
         cell = self.cells[row][col]
         if not win:
             cell.configure(image=self.exploded)
         self.gameOver = True
         for _row in self.cells:
             for _cell in _row:
-                if self.actualBoard[_cell.row][_cell.col] == "*":
+                if self.actual_board[_cell.row][_cell.col] == "*":
                     if not win:
                         if not _cell == cell:
 
-                            if self.visualBoard[_cell.row][_cell.col] == "F":
+                            if self.visual_board[_cell.row][_cell.col] == "F":
                                 _cell.configure(image=self.flag_correct)
                             else:
                                 _cell.configure(image=self.bomb)
                     else:
-                        if self.visualBoard[_cell.row][_cell.col] == "F":
+                        if self.visual_board[_cell.row][_cell.col] == "F":
                             _cell.configure(image=self.flag_correct)
                         else:
                             _cell.configure(image=self.bomb)
-                elif self.visualBoard[_cell.row][_cell.col] == "F":
+                elif self.visual_board[_cell.row][_cell.col] == "F":
                     _cell.configure(image=self.flag_wrong)
-        showinfo("Game Over", LOST_MESSAGE(self.c_f, self.mines_n) if not win else WIN_MESSAGE(self.c_f, self.mines_n))
+        end_time = time()
+        finish = end_time - self.timer
+        finish = round(finish, 2)
+        print(finish, " ", end_time, " ", self.timer)
+        if finish < get_config("high_score") and win:
+            set_config("high_score", finish)
+        showinfo("Game Over", LOST_MESSAGE(self.c_f, self.mines_n, finish) if not win else WIN_MESSAGE(self.c_f, self.mines_n, finish))
 
     def load_board(self):
         """

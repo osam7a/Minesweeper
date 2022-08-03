@@ -57,7 +57,7 @@ def make_mines(board, size, mines_n=8, excep=None):
         row = pos[0]
         column = pos[1]
         avail.remove(pos)
-        # print("Mine at ", row, column)
+        print("Mine at ", row, column)
         # The random cell is not a mine
         if board[row][column] != "*":
             board[row][column] = "*"

@@ -1,5 +1,6 @@
 from tkinter import Button
 from typing import TYPE_CHECKING
+from time import time
 
 from .utils import make_mines, find_neighbors
 
@@ -27,22 +28,23 @@ class Cell(Button):
         """Mines the cell."""
         if not self.game.started:
             self.game.started = True
-            self.game.actualBoard = make_mines(
-                self.game.actualBoard,
+            self.game.timer = time()
+            self.game.actual_board = make_mines(
+                self.game.actual_board,
                 self.game.size,
                 self.game.mines_n,
                 (self.row, self.col),
             )
         if self.game.gameOver:
             return
-        if not self.game.visualBoard[self.row][self.col] == "M":
-            if self.game.actualBoard[self.row][self.col] == "*":
+        if not self.game.visual_board[self.row][self.col] == "M":
+            if self.game.actual_board[self.row][self.col] == "*":
                 self.game.game_over(False, self.row, self.col)
             else:
-                self.game.visualBoard[self.row][self.col] = "M"
+                self.game.visual_board[self.row][self.col] = "M"
                 self.configure(
-                    image=self.game.numbers[self.game.actualBoard[self.row][self.col] - 1]
-                    if self.game.actualBoard[self.row][self.col] > 0
+                    image=self.game.numbers[self.game.actual_board[self.row][self.col] - 1]
+                    if self.game.actual_board[self.row][self.col] > 0
                     else self.game.mined
                 )
                 self.game.total_mined += 1
@@ -71,18 +73,18 @@ class Cell(Button):
 
         :return: None
         """
-        neighbors = find_neighbors(self.game.actualBoard, row, column, False)
+        neighbors = find_neighbors(self.game.actual_board, row, column, False)
         for neighbor in neighbors:
             if neighbor in self.checked:
                 continue
-            if not isinstance(self.game.actualBoard[neighbor[0]][neighbor[1]], str):
+            if not isinstance(self.game.actual_board[neighbor[0]][neighbor[1]], str):
                 self.checked.add(neighbor)
-                self.game.visualBoard[neighbor[0]][neighbor[1]] = "M"
+                self.game.visual_board[neighbor[0]][neighbor[1]] = "M"
                 self.game.total_mined += 1
                 self.game.cells[neighbor[0]][neighbor[1]].configure(
-                    image=self.game.mined if self.game.actualBoard[row][column] == 0 else self.game.numbers[self.game.actualBoard[row][column] - 1]
+                    image=self.game.mined if self.game.actual_board[row][column] == 0 else self.game.numbers[self.game.actual_board[row][column] - 1]
                 )
-                if not self.game.actualBoard[neighbor[0]][neighbor[1]] > 0:
+                if not self.game.actual_board[neighbor[0]][neighbor[1]] > 0:
                     self._AMine(neighbor[0], neighbor[1])
 
     def flag(self, event):
@@ -93,17 +95,17 @@ class Cell(Button):
         """
         if self.game.gameOver:
             return
-        vB = self.game.visualBoard
+        vB = self.game.visual_board
         if vB[self.row][self.col] == "F":
             self.configure(image=self.game.unknown)
-            self.game.visualBoard[self.row][self.col] = "N"
-            if self.game.actualBoard[self.row][self.col] == "*":
+            self.game.visual_board[self.row][self.col] = "N"
+            if self.game.actual_board[self.row][self.col] == "*":
                 self.game.c_f -= 1
         else:
             if not vB[self.row][self.col] == "M":
-                self.game.visualBoard[self.row][self.col] = "F"
+                self.game.visual_board[self.row][self.col] = "F"
                 self.configure(image=self.game.flagged)
-                if self.game.actualBoard[self.row][self.col] == "*":
+                if self.game.actual_board[self.row][self.col] == "*":
                     self.game.c_f += 1
                 if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
                     self.game.game_over(True, self.row, self.col)
