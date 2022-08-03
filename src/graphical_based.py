@@ -67,9 +67,6 @@ class Tkinter:
         self.root = Tk()
         self.root.title("Minesweeper")
 
-        showinfo("How to play", HOW_TO_PLAY)
-        showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
-
         # Configuration
         self.conf = json.load(open("config.json"))
         self.mines_n = self.conf["mines_n"]
@@ -134,6 +131,8 @@ class Tkinter:
         menu.add_cascade(label="Exit", menu=exitg)
 
         self.load_board()
+        showinfo("How to play", HOW_TO_PLAY)
+        showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
         self.root.mainloop()
 
     def game_over(self, win, row, col):
