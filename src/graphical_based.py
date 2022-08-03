@@ -16,6 +16,12 @@ You won the game!
 Defused Bombs: {flags}
 Remaining Bombs: {bombs - flags}
 """
+HOW_TO_PLAY = """
+Minesweeper is a puzzle game, in which the player tries to clear a rectangular board of cells, by flagging every mine around the board, and by clearing every cell without a mine, Every cell around a mine has a number, this number indicates how many mines are around this cell, if there is 2 mines, the number is 2, if there is 3 mines, the number is 3, and so on.
+To start the game, click anywhere on the board.
+To flag a cell, click on it with the right mouse button.
+To clear a cell, click on it with the left mouse button.
+"""
 
 
 def rest(root):
@@ -60,6 +66,9 @@ class Tkinter:
     def __init__(self):
         self.root = Tk()
         self.root.title("Minesweeper")
+
+        showinfo("How to play", HOW_TO_PLAY)
+        showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
 
         # Configuration
         self.conf = json.load(open("config.json"))
