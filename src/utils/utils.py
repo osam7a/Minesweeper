@@ -43,6 +43,15 @@ def make_mines(board, size, mines_n=8, excep=None):
     avail = [(i, j) for i in range(size) for j in range(size)]
     if excep:
         avail.remove(excep)
+        avail.remove((excep[0]-1, excep[1]))
+        avail.remove((excep[0]+1, excep[1]))
+        avail.remove((excep[0], excep[1]-1))
+        avail.remove((excep[0], excep[1]+1))
+        avail.remove((excep[0]-1, excep[1]-1))
+        avail.remove((excep[0]-1, excep[1]+1))
+        avail.remove((excep[0]+1, excep[1]-1))
+        avail.remove((excep[0]+1, excep[1]+1))
+        
 
     for i in range(mines_n):
         # Random row and column
