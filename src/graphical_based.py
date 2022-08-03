@@ -24,6 +24,13 @@ def rest(root):
 
 
 def changeSize(root, size, mine_count):
+    """
+    Changes the size of the board.
+
+    :param root: The window root of the game.
+    :param size: The size of the new board.
+    :param mine_count: The number of mines in the new board.
+    """
     root.destroy()
     load = json.load(open("config.json"))
     load["mines_n"] = mine_count
@@ -33,6 +40,13 @@ def changeSize(root, size, mine_count):
 
 
 def customSize(root):
+    """
+    Makes dialogs to change the size of the board.
+
+    :param root: The window root of the game.
+
+    :return: None
+    """
     size = askinteger(
         "Custom Size", "Enter the size of the board:", minvalue=2, maxvalue=18
     )
@@ -114,6 +128,15 @@ class Tkinter:
         self.root.mainloop()
 
     def game_over(self, win, row, col):
+        """
+        Game Over
+
+        :param win: Whether the player won or not
+        :param row: Row of the losing cell
+        :param col: Column of the losing cell
+
+        :return: None
+        """
         cell = self.cells[row][col]
         if not win:
             cell.configure(image=self.exploded)
@@ -138,6 +161,11 @@ class Tkinter:
         showinfo("Game Over", LOST_MESSAGE(self.c_f, self.mines_n) if not win else WIN_MESSAGE(self.c_f, self.mines_n))
 
     def load_board(self):
+        """
+        Loads the board
+
+        :return: None
+        """
         for i in range(self.size):
             for j in range(self.size):
                 btn = Cell(self, i, j)

@@ -51,10 +51,26 @@ class Cell(Button):
                 # self.AMine(self.row, self.col)
 
     def AMine(self, row, column):
+        """
+        Automatic Click (Not repeated)
+
+        :param row: The row of the cell.
+        :param column: The column of the cell.
+
+        :return: None
+        """
         self.checked = set((row, column))
         self._AMine(row, column)
 
     def _AMine(self, row, column):
+        """
+        Automatic Click (Repeated)
+
+        :param row: The row of the cell.
+        :param column: The column of the cell.
+
+        :return: None
+        """
         neighbors = find_neighbors(self.game.actualBoard, row, column, False)
         for neighbor in neighbors:
             if neighbor in self.checked:
