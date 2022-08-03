@@ -48,7 +48,7 @@ class Cell(Button):
                 self.game.total_mined += 1
                 if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
                     self.game.game_over(True, self.row, self.col)
-                # self.AMine(self.row, self.col)
+                self.AMine(self.row, self.col)
 
     def AMine(self, row, column):
         self.checked = set((row, column))

@@ -7,7 +7,7 @@ def find_neighbors(board, row, col, diagonal=True):
     :param board: The board to search.
     :param row: The row of the cell.
     :param col: The column of the cell.
-    :param diagonal: Whether to include diagonal neighbors.
+    :param diagonal: Whether to include diagonal neighbors or not.
 
     :return: A list of neighbouring cells.
     """
