@@ -42,8 +42,8 @@ def make_mines(board, size, mines_n=8, excep=None):
     """
     avail = [(i, j) for i in range(size) for j in range(size)]
     if excep:
+        avail.remove(excep)
         if not size*size < 16:
-            avail.remove(excep)
             neighbors = find_neighbors(board, excep[0], excep[1])
             for neighbor in neighbors:
                 try:
@@ -57,6 +57,7 @@ def make_mines(board, size, mines_n=8, excep=None):
         row = pos[0]
         column = pos[1]
         avail.remove(pos)
+        # print("Mine at:", row, column)
         # The random cell is not a mine
         if board[row][column] != "*":
             board[row][column] = "*"

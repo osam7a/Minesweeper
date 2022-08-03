@@ -50,7 +50,7 @@ class Cell(Button):
                 self.game.total_mined += 1
                 if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
                     self.game.game_over(True, self.row, self.col)
-                # self.AMine(self.row, self.col)
+                self.AMine(self.row, self.col)
 
     def AMine(self, row, column):
         """
@@ -61,7 +61,8 @@ class Cell(Button):
 
         :return: None
         """
-        if self.game.actual_board[row][column] > 0: return
+        if self.game.size / 2 < self.game.mines_n: 
+            return
         self.checked = set((row, column))
         self._AMine(row, column)
 
@@ -74,21 +75,22 @@ class Cell(Button):
 
         :return: None
         """
-        neighbors = find_neighbors(self.game.actual_board, row, column, False)
-        for neighbor in neighbors:
-            if neighbor in self.checked:
-                continue
-            if not self.game.actual_board[neighbor[0]][neighbor[1]] == "*":
-                self.checked.add(neighbor)
-                self.game.visual_board[neighbor[0]][neighbor[1]] = "M"
-                self.game.total_mined += 1
-                self.game.cells[neighbor[0]][neighbor[1]].configure(
-                    image=self.game.mined if self.game.actual_board[row][column] == 0 else self.game.numbers[self.game.actual_board[row][column] - 1]
-                )
-                if self.game.actual_board[neighbor[0]][neighbor[1]] > 0:
-                    continue
-                else:
-                    self._AMine(neighbor[0], neighbor[1])
+        if (row, column) in self.checked:
+            return
+        self.checked.add((row, column))
+        self.game.visual_board[row][column] = "M"
+        self.game.cells[row][column].configure(image=self.game.numbers[self.game.actual_board[row][column] - 1]
+                       if self.game.actual_board[row][column] > 0
+                       else self.game.mined)
+        self.game.total_mined += 1
+        if self.game.actual_board[row][column] > 0:
+            return
+        else:
+            for (i, j) in find_neighbors(self.game.actual_board, row, column):
+                self._AMine(i, j)
+                if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+                    self.game.game_over(True, self.row, self.col)
+            
 
     def flag(self, event):
         """Flags the cell.
