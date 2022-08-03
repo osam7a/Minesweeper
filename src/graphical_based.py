@@ -220,7 +220,6 @@ class Tkinter:
         end_time = time()
         finish = end_time - self.timer
         finish = round(finish, 2)
-        print(finish, " ", end_time, " ", self.timer)
         if finish < get_config("high_score") and win:
             set_config("high_score", finish)
         showinfo("Game Over", LOST_MESSAGE(self.c_f, self.mines_n, finish) if not win else WIN_MESSAGE(self.c_f, self.mines_n, finish))
