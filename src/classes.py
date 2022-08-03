@@ -34,6 +34,7 @@ class Cell(Button):
                 self.game.size,
                 self.game.mines_n,
                 (self.row, self.col),
+                debug=True
             )
         if self.game.gameOver:
             return
@@ -47,10 +48,8 @@ class Cell(Button):
                     if self.game.actual_board[self.row][self.col] > 0
                     else self.game.mined
                 )
-                self.game.total_mined += 1
-                if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
-                    self.game.game_over(True, self.row, self.col)
-                self.AMine(self.row, self.col)
+                e = self.AMine(self.row, self.col)
+                
 
     def AMine(self, row, column):
         """
@@ -61,10 +60,11 @@ class Cell(Button):
 
         :return: None
         """
-        if self.game.size / 2 < self.game.mines_n: 
+        if (self.game.size * self.game.size) / 2 < self.game.mines_n: 
             return
         self.checked = set((row, column))
         self._AMine(row, column)
+        
 
     def _AMine(self, row, column):
         """
@@ -75,6 +75,8 @@ class Cell(Button):
 
         :return: None
         """
+        if self.game.c_f == self.game.mines_n:
+            return
         if (row, column) in self.checked:
             return
         self.checked.add((row, column))
@@ -83,13 +85,14 @@ class Cell(Button):
                        if self.game.actual_board[row][column] > 0
                        else self.game.mined)
         self.game.total_mined += 1
+        if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+            self.game.game_over(True, self.row, self.col)
+            return
         if self.game.actual_board[row][column] > 0:
             return
         else:
             for (i, j) in find_neighbors(self.game.actual_board, row, column):
                 self._AMine(i, j)
-                if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
-                    self.game.game_over(True, self.row, self.col)
             
 
     def flag(self, event):
@@ -100,6 +103,8 @@ class Cell(Button):
         """
         if self.game.gameOver:
             return
+        if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
+            self.game.game_over(True, self.row, self.col)
         vB = self.game.visual_board
         if vB[self.row][self.col] == "F":
             self.configure(image=self.game.unknown)

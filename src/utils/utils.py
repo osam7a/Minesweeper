@@ -30,7 +30,7 @@ def find_neighbors(board, row, col, diagonal=True):
     return neighbors
 
 
-def make_mines(board, size, mines_n=8, excep=None):
+def make_mines(board, size, mines_n=8, excep=None, debug=False):
     """Place random mines on the board
 
     :param board: The board to make the mines on.
@@ -40,6 +40,9 @@ def make_mines(board, size, mines_n=8, excep=None):
 
     :return: The created board.
     """
+    if debug:
+        random.seed(0)
+
     avail = [(i, j) for i in range(size) for j in range(size)]
     if excep:
         avail.remove(excep)
@@ -57,7 +60,7 @@ def make_mines(board, size, mines_n=8, excep=None):
         row = pos[0]
         column = pos[1]
         avail.remove(pos)
-        # print("Mine at:", row, column)
+        print("Mine at:", row, column)
         # The random cell is not a mine
         if board[row][column] != "*":
             board[row][column] = "*"

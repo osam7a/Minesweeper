@@ -239,5 +239,5 @@ class Tkinter:
 
 
 def main(first_game):
-    Tkinter(first_game)
+    return Tkinter(first_game)
     
