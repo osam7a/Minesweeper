@@ -61,6 +61,7 @@ class Cell(Button):
 
         :return: None
         """
+        if self.game.actual_board[row][column] > 0: return
         self.checked = set((row, column))
         self._AMine(row, column)
 
@@ -77,14 +78,16 @@ class Cell(Button):
         for neighbor in neighbors:
             if neighbor in self.checked:
                 continue
-            if not isinstance(self.game.actual_board[neighbor[0]][neighbor[1]], str):
+            if not self.game.actual_board[neighbor[0]][neighbor[1]] == "*":
                 self.checked.add(neighbor)
                 self.game.visual_board[neighbor[0]][neighbor[1]] = "M"
                 self.game.total_mined += 1
                 self.game.cells[neighbor[0]][neighbor[1]].configure(
                     image=self.game.mined if self.game.actual_board[row][column] == 0 else self.game.numbers[self.game.actual_board[row][column] - 1]
                 )
-                if not self.game.actual_board[neighbor[0]][neighbor[1]] > 0:
+                if self.game.actual_board[neighbor[0]][neighbor[1]] > 0:
+                    continue
+                else:
                     self._AMine(neighbor[0], neighbor[1])
 
     def flag(self, event):
