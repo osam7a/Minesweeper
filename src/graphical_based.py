@@ -5,6 +5,7 @@ from tkinter.simpledialog import askinteger
 
 from .classes import Cell
 
+first_game = True
 
 LOST_MESSAGE = lambda flags, bombs: f"""
 You lost the game!
@@ -17,7 +18,13 @@ Defused Bombs: {flags}
 Remaining Bombs: {bombs - flags}
 """
 HOW_TO_PLAY = """
-Minesweeper is a puzzle game, in which the player tries to clear a rectangular board of cells, by flagging every mine around the board, and by clearing every cell without a mine, Every cell around a mine has a number, this number indicates how many mines are around this cell, if there is 2 mines, the number is 2, if there is 3 mines, the number is 3, and so on.
+What is minesweeper?
+Minesweeper is a puzzle game, in which the player tries to clear a rectangular board of cells by flagging every mine around the board and by clearing every cell without a mine
+
+How to play minesweeper?
+Every cell around a mine has a number, this number indicates how many mines are around this cell, if there is 2 mines the number is 2, if there is 3 mines the number is 3, if there is no mines there is no number and so on.
+
+What are the controls?
 To start the game, click anywhere on the board.
 To flag a cell, click on it with the right mouse button.
 To clear a cell, click on it with the left mouse button.
@@ -131,8 +138,10 @@ class Tkinter:
         menu.add_cascade(label="Exit", menu=exitg)
 
         self.load_board()
-        showinfo("How to play", HOW_TO_PLAY)
-        showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
+        if first_game:
+            showinfo("How to play", HOW_TO_PLAY)
+            showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
+            first_game = True
         self.root.mainloop()
 
     def game_over(self, win, row, col):
