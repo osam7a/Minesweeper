@@ -5,8 +5,6 @@ from tkinter.simpledialog import askinteger
 
 from .classes import Cell
 
-first_game = True
-
 LOST_MESSAGE = lambda flags, bombs: f"""
 You lost the game!
 Defused Bombs: {flags}
@@ -32,8 +30,25 @@ To clear a cell, click on it with the left mouse button.
 
 
 def rest(root):
+    """
+    Restarts the game.
+
+    :param root: The window root of the game.
+
+    :return: None
+    """
     root.destroy()
-    main()
+    main(False)
+
+
+def showHelp():
+    """
+    Shows the help dialog.
+
+    :return: None
+    """
+    showinfo("How to play", HOW_TO_PLAY)
+    showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
 
 
 def changeSize(root, size, mine_count):
@@ -43,13 +58,15 @@ def changeSize(root, size, mine_count):
     :param root: The window root of the game.
     :param size: The size of the new board.
     :param mine_count: The number of mines in the new board.
+
+    :return: None
     """
     root.destroy()
     load = json.load(open("config.json"))
     load["mines_n"] = mine_count
     load["size"] = size
     json.dump(load, open("config.json", "w"))
-    main()
+    main(False)
 
 
 def customSize(root):
@@ -70,7 +87,7 @@ def customSize(root):
 
 
 class Tkinter:
-    def __init__(self):
+    def __init__(self, first_game):
         self.root = Tk()
         self.root.title("Minesweeper")
 
@@ -139,8 +156,7 @@ class Tkinter:
 
         self.load_board()
         if first_game:
-            showinfo("How to play", HOW_TO_PLAY)
-            showinfo("Note", "First click will always be clear, and has no number! (Unless you're playing with a board that's under 4x4)")
+            showHelp()
             first_game = True
         self.root.mainloop()
 
@@ -190,5 +206,7 @@ class Tkinter:
                 self.cells[i][j] = btn
 
 
-def main():
-    Tkinter()
+
+def main(first_game):
+    Tkinter(first_game)
+    
