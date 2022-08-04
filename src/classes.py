@@ -34,7 +34,7 @@ class Cell(Button):
                 self.game.size,
                 self.game.mines_n,
                 (self.row, self.col),
-                debug=True
+                debug=False
             )
         if self.game.gameOver:
             return
@@ -62,7 +62,7 @@ class Cell(Button):
         """
         if (self.game.size * self.game.size) / 2 < self.game.mines_n: 
             return
-        self.checked = set((row, column))
+        self.checked = set()
         self._AMine(row, column)
         
 
@@ -75,9 +75,9 @@ class Cell(Button):
 
         :return: None
         """
-        if self.game.c_f == self.game.mines_n:
-            return
         if (row, column) in self.checked:
+            return
+        if self.game.visual_board[row][column] == "M" and len(self.checked) != 0:
             return
         self.checked.add((row, column))
         self.game.visual_board[row][column] = "M"
