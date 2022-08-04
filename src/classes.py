@@ -17,7 +17,7 @@ class Cell(Button):
     """
 
     def __init__(self, game: "Tkinter", row: int, column: int):
-        super().__init__(game.root, image=game.unknown, command=self.mine)
+        super().__init__(game.root, image=game.unknown, command=self.mine, width=37.5, height=37.5)
 
         self.game = game
         self.row = row
@@ -48,7 +48,7 @@ class Cell(Button):
                     if self.game.actual_board[self.row][self.col] > 0
                     else self.game.mined
                 )
-                e = self.AMine(self.row, self.col)
+                self.AMine(self.row, self.col)
                 
 
     def AMine(self, row, column):
@@ -83,7 +83,9 @@ class Cell(Button):
         self.game.visual_board[row][column] = "M"
         self.game.cells[row][column].configure(image=self.game.numbers[self.game.actual_board[row][column] - 1]
                        if self.game.actual_board[row][column] > 0
-                       else self.game.mined)
+                       else self.game.mined,
+                       borderwidth=0,
+                       highlightthickness=0)
         self.game.total_mined += 1
         if self.game.c_f + self.game.total_mined == self.game.size * self.game.size:
             self.game.game_over(True, self.row, self.col)
