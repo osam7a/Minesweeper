@@ -45,14 +45,16 @@ def make_mines(board, size, mines_n=8, excep=None, debug=False):
 
     avail = [(i, j) for i in range(size) for j in range(size)]
     if excep:
-        avail.remove(excep)
-        if not size*size < 16:
-            neighbors = find_neighbors(board, excep[0], excep[1])
-            for neighbor in neighbors:
-                try:
-                    avail.remove(neighbor)
-                except ValueError:
-                    continue 
+        if size*size-mines_n not in range (0, 9): 
+            
+            avail.remove(excep)
+            if not size*size < 16:
+                neighbors = find_neighbors(board, excep[0], excep[1])
+                for neighbor in neighbors:
+                    try:
+                        avail.remove(neighbor)
+                    except ValueError:
+                        continue 
 
     for i in range(mines_n):
         # Random row and column
